@@ -1,87 +1,50 @@
 'use client'
-import { Card, CardContent } from '@/components/ui/card'
-import React from 'react'
-import Logo from '@/public/assets/images/logo-black.png'
-import Image from 'next/image'
-import {zodResolver} from '@hookform/resolvers/zod'
-import { zSchema } from '@/lib/zodSchema'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-const LoginPage = () => {
+import { zodResolver } from '@hookform/resolvers/zod'
+import { zSchema } from '@/lib/zodSchema'
+import { Form } from '@/components/ui/form'
+import AuthFormLayout from '@/components/application/AuthFormLayout'
+import FormInputField from '@/components/application/FormInputField'
+import PasswordField from '@/components/application/PasswordField'
+import ButtonLoading from '@/components/application/ButtonLoading'
+import AuthRedirectText from '@/components/application/AuthRedirectText'
+import { WEBSITE_REGISTER } from '@/routes/WebsiteRoute'
+import Link from 'next/link'
 
-  const formSchema = zSchema.pick({
-    email: true, password: true
-  })
+export default function LoginPage() {
+  const [loading, setLoading] = useState(false) // ✅ Added this line
 
   const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email:"",password:""
-    },
-  })
+    resolver: zodResolver(zSchema),
+    defaultValues: { fullName: '', email: '', password: '', confirmPassword: '' },
+  });
 
   const handleSubmit = async (values) => {
-    
+    setLoading(true)
+    try {
+      // simulate API call or handle registration
+      console.log(values)
+    } finally {
+      setLoading(false)
+    }
   }
+
   return (
-    <Card className="w-[450px]">
-      <CardContent>
-        <div className='flex justify-center'>
-          <Image src={Logo.src} width={Logo.width} height={Logo.height} alt='Logo'
-            className='max-w-[150px]'
-          ></Image>
-        </div>
-        <div className='text-center'>
-          <h1 className='font-2xl font-semibold'>Login into account</h1>
-          <p>Login into your account by filling out the form below.</p>
-        </div>
-        <div className='mt-5'>
-          <Form {...form}>
+    <AuthFormLayout title="Login Into Account" subTitle="Login into your account by filling out the form below.">
+        <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)}>
-              <div className='mb-5'>
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="example@gmail.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className='mb-5'>
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="**********" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                <FormInputField control={form.control} name="email" label="Email" placeholder="example@gmail.com" type="email" />
+                <PasswordField control={form.control} name="password" label="Password" placeholder="**********" className="mt-5" />
+                <ButtonLoading loading={loading} classname="w-full mt-5" type="submit" text="Login" />
             </form>
-          </Form>
+        </Form>
+        <div className="text-center mt-3">
+            <AuthRedirectText text="Don't have account?" linkText="Create Account!" href={WEBSITE_REGISTER} />
         </div>
-      </CardContent>
-    </Card>
+         <div className="text-center mt-3">
+            <Link href="" className='cursor-pointer underline text-primary'>Forget Password!</Link>
+        </div>
+    </AuthFormLayout>
   )
 }
-
-export default LoginPage
