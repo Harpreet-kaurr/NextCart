@@ -55,3 +55,12 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
   next()
 });
+
+userSchema.methods = {
+  comparePassword: async function (password) {
+    return await bcrypt.compare(password, this.password) 
+  }
+}
+
+const UserModal = mongoose.model.User || mongoose.model('User', userSchema, 'users')
+export default UserModal
